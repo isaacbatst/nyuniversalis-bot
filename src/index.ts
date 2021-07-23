@@ -5,8 +5,7 @@ import sortName from './names';
 
 dotenv.config();
 
-let counter = 8;
-
+let counter = parseInt(process.env.INITIAL_VALUE || "0");
 
 try {
   const token = process.env.BOT_TOKEN;
