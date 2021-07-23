@@ -1,0 +1,15 @@
+{
+  "name": "luan-na-cozinha",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "isaacbatst <isaacbatst@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "node-telegram-bot-api": "^0.54.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16.4.1",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.3.5"
+  }
+}
