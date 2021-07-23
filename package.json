@@ -4,6 +4,9 @@
   "main": "index.js",
   "author": "isaacbatst <isaacbatst@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "dev": "tsnd --respawn --transpile-only src/index.ts"
+  },
   "dependencies": {
     "dotenv": "^10.0.0",
     "node-telegram-bot-api": "^0.54.0"
