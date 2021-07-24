@@ -1,14 +1,10 @@
-import dotenv from 'dotenv';
-import TelegramBot from 'node-telegram-bot-api';
 import createBot from './bot';
-import sortName from './names';
+import handleEvents from './useCases/botEvents';
+import ENV from './env';
 
-dotenv.config();
-
-let counter = parseInt(process.env.INITIAL_VALUE || "0");
 
 try {
-  const token = process.env.BOT_TOKEN;
+  const token = ENV.BOT_TOKEN;
   
   if(token){
     const bot = createBot(token);
@@ -19,16 +15,4 @@ try {
   console.log(error)
 }
 
-function handleEvents(bot: TelegramBot){
-  bot.onText(/\/foi_denovo/, (message) => {
-    console.log('oi')
-    const { chat: { id } } = message;
-
-    counter += 1;
-
-    const name = sortName();
-
-    bot.sendMessage(id, `${name} foi na cozinha ${counter} vezes`)
-  })
-}
 
