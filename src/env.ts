@@ -11,7 +11,7 @@ export const NAMES = {
 }
 
 export default {
-  LUAN_VALUE: process.env.LUAN_VALUE || "0",
-  ARTHUR_VALUE: process.env.ARTHUR_VALUE || "0",
+  LUAN_VALUE: parseInt(process.env.LUAN_VALUE || "0"),
+  ARTHUR_VALUE: parseInt(process.env.ARTHUR_VALUE || "0"),
   BOT_TOKEN: process.env.BOT_TOKEN,
 }
