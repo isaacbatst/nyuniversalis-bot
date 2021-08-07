@@ -1,49 +1,63 @@
 import TelegramBot from "node-telegram-bot-api";
-import ENV, { NAMES } from '../env';
+import { PersonModel } from "../database/Entities/Person/Person";
 import sortName from "../names";
-
-let luanCounter = ENV.LUAN_VALUE;
-let arthurCounter = ENV.ARTHUR_VALUE;
 
 const ARTHUR_USERNAME = 'Arthur_HOS';
 
-function handleEvents(bot: TelegramBot){
-  bot.onText(/\/luan_na_cozinha/, (message) => {
+function handleEvents(bot: TelegramBot) {
+  bot.onText(/\/luan_na_cozinha/, async (message) => {
     const { chat: { id } } = message;
 
-    luanCounter += 1;
+    const name = 'Luan';
 
-    const name = sortName(NAMES.luan);
+    await PersonModel.incrementCounter(name);
+    const counter = await PersonModel.getCounter(name);
+    const nicknames = await PersonModel.getNicknames(name);
 
-    bot.sendMessage(id, `${name} foi na cozinha ${luanCounter} vezes`)
+    const nickname = sortName(nicknames);
+
+    bot.sendMessage(id, `${nickname} foi na cozinha ${counter} vezes`)
   })
 
-  bot.onText(/\/qnts_na_cozinha/, (message) => {
+  bot.onText(/\/qnts_na_cozinha/, async (message) => {
     const { chat: { id } } = message;
 
-    const name = sortName(NAMES.luan);
+    const name = 'Luan';
 
-    bot.sendMessage(id, `${name} foi na cozinha ${luanCounter} vezes`)
+    const nicknames = await PersonModel.getNicknames(name);
+    const counter = await PersonModel.getCounter(name);
+
+    const nickname = sortName(nicknames);
+
+    bot.sendMessage(id, `${nickname} foi na cozinha ${counter} vezes`)
   })
 
-  bot.on('message', (message) => {
-    if(!message.from){
+  bot.on('message', async (message) => {
+    if (!message.from) {
       return
     }
 
-    
-    if(message.from.username === ARTHUR_USERNAME && message.forward_date){
-      arthurCounter += 1
-      bot.sendMessage(message.chat.id, `🙈 Ooops - ${arthurCounter}`)
+    const name = 'Arthur';
+
+    if (message.from.username === ARTHUR_USERNAME && message.forward_date) {
+      await PersonModel.incrementCounter(name);
+      const counter = await PersonModel.getCounter(name);
+
+      bot.sendMessage(message.chat.id, `🙈 Ooops - ${counter}`)
     }
   })
 
-  bot.onText(/\/qnts_macaco/, (message) => {
+  bot.onText(/\/qnts_macaco/, async (message) => {
     const { chat: { id } } = message;
 
-    const name = sortName(NAMES.arthur);
+    const name = 'Arthur';
 
-    bot.sendMessage(id, `${name} dividiu e compartilhou ${arthurCounter} vezes`)
+    const counter = await PersonModel.getCounter(name);
+    const nicknames = await PersonModel.getNicknames(name);
+
+    const nickname = sortName(nicknames);
+
+    bot.sendMessage(id, `${nickname} dividiu e compartilhou ${counter} vezes`)
   })
 }
 
