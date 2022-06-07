@@ -3,7 +3,7 @@ import { incrementArthurFowards } from "./incrementArthurFowards";
 import { incrementLuanAmouranth } from "./incrementLuanAmouranth";
 
 const ARTHUR_USERNAME = 'Arthur_HOS';
-const LUAN_FIRST_NAME = 'Luan'
+const LUAN_FIRST_NAME = 'Luamboru'
 
 export const handleUserMessage = async (message: TelegramBot.Message, bot: TelegramBot) => {
   if (!message.from) {
