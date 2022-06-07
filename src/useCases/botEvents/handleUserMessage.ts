@@ -11,7 +11,7 @@ export const handleUserMessage = async (message: TelegramBot.Message, bot: Teleg
   }
 
   // log users info
-  console.log(message.from, message.chat);
+  console.log(message.from);
 
   if (message.from.username === ARTHUR_USERNAME && message.forward_date) {
     return incrementArthurFowards(message, bot)
