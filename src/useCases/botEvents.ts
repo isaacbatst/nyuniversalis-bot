@@ -43,13 +43,16 @@ function handleEvents(bot: TelegramBot) {
       await PersonModel.incrementCounter(name);
       const counter = await PersonModel.getCounter(name);
 
-      bot.sendMessage(message.chat.id, `🙈 Ooops - ${counter}`)
+      const nicknames = await PersonModel.getNicknames(name);
+
+      const nickname = sortName(nicknames);
+
+      const { chat: { id } } = message;
+      bot.sendMessage(id, `${nickname} dividiu e compartilhou ${counter} vezes`)
     }
   })
 
   bot.onText(/\/qnts_macaco/, async (message) => {
-    const { chat: { id } } = message;
-
     const name = 'Arthur';
 
     const counter = await PersonModel.getCounter(name);
@@ -57,6 +60,7 @@ function handleEvents(bot: TelegramBot) {
 
     const nickname = sortName(nicknames);
 
+    const { chat: { id } } = message;
     bot.sendMessage(id, `${nickname} dividiu e compartilhou ${counter} vezes`)
   })
 }
