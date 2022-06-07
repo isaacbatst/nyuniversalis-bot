@@ -2,11 +2,11 @@ import TelegramBot from "node-telegram-bot-api";
 import { PersonModel } from "../../database/Entities/Person/Person";
 import drawName from "../../names";
 
-export const incrementArthurFowards = async (message: TelegramBot.Message, bot: TelegramBot) => {
-  const name = 'Arthur';
+export const incrementLuanAmouranth = async (message: TelegramBot.Message, bot: TelegramBot) => {
+  const name = 'Luan';
 
-  await PersonModel.incrementCounter(name);
-  const counter = await PersonModel.getCounter(name);
+  await PersonModel.incrementCounter(name, true);
+  const counter = await PersonModel.getCounter(name, true);
 
   const nicknames = await PersonModel.getNicknames(name);
   const nickname = drawName(nicknames);
