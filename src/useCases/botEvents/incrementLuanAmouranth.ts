@@ -5,8 +5,8 @@ import drawName from "../../names";
 export const incrementLuanAmouranth = async (message: TelegramBot.Message, bot: TelegramBot) => {
   const name = 'Luan';
 
-  await PersonModel.incrementCounter(name, true);
-  const counter = await PersonModel.getCounter(name, true);
+  await PersonModel.incrementCounterAmouranth(name);
+  const counter = await PersonModel.getCounterAmouranth(name);
 
   const nicknames = await PersonModel.getNicknames(name);
   const nickname = drawName(nicknames);

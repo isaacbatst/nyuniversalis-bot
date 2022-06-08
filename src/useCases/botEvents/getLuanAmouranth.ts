@@ -8,7 +8,7 @@ export const getLuanAmouranth = async (message: TelegramBot.Message, bot: Telegr
   const name = 'Luan';
 
   const nicknames = await PersonModel.getNicknames(name);
-  const counter = await PersonModel.getCounter(name, true);
+  const counter = await PersonModel.getCounterAmouranth(name);
 
   const nickname = drawName(nicknames);
 
