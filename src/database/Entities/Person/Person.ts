@@ -52,10 +52,10 @@ schema.statics.incrementCounter = async function incrementCounter(this: IPersonM
   if (person) {
     if(amouranth && person.counterAmourant) {
       await this.updateOne({ name }, { counterAmourant: person.counterAmourant + 1 });
+      return;
     }
 
     await this.updateOne({ name }, { counter: person.counter + 1 });
-
     return;
   }
 
