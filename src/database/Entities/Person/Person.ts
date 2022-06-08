@@ -20,6 +20,7 @@ const schema = new Schema<Person, IPersonModel>({
   name: String,
   nicknames: [String],
   counter: Number,
+  counterAmourant: Number
 }, {
   collection: DB_COLLECTION
 })
@@ -55,8 +56,6 @@ schema.statics.incrementCounter = async function incrementCounter(this: IPersonM
   throw new Error('not found');
 }
 
-export const PersonModel = model<Person, IPersonModel>('Person', schema);
-
 schema.statics.getCounterAmouranth = async function getCounterAmouranth(this: IPersonModel, name: string): Promise<number> {
   const person = await this.findOne({ name });
 
@@ -77,3 +76,5 @@ schema.statics.incrementCounterAmouranth = async function incrementCounterAmoura
 
   throw new Error('not found');
 }
+
+export const PersonModel = model<Person, IPersonModel>('Person', schema);
