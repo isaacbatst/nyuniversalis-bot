@@ -34,9 +34,9 @@ export const incrementArthurFowards = async (message: TelegramBot.Message, bot: 
     return null;
   }, null)
 
-  bot.sendMessage(message.chat.id, `${nickname} dividiu e compartilhou ${counter} vezes`)
+  await bot.sendMessage(message.chat.id, `${nickname} dividiu e compartilhou ${counter} vezes`)
 
   if(celebrationMessage) {
-    bot.sendMessage(message.chat.id, celebrationMessage)
+    await bot.sendMessage(message.chat.id, celebrationMessage)
   }
 }
