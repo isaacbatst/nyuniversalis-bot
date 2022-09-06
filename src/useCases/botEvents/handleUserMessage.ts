@@ -17,7 +17,7 @@ export const handleUserMessage = async (message: TelegramBot.Message, bot: Teleg
     return incrementArthurFowards(message, bot)
   }
 
-  if(message.text === 'https://www.twitch.tv/amouranth' && message.from.first_name === LUAN_FIRST_NAME) {
+  if(message.text.includes('https://www.twitch.tv') && message.from.first_name === LUAN_FIRST_NAME) {
     return incrementLuanAmouranth(message, bot)
   }
 }
