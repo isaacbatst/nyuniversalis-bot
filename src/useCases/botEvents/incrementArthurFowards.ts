@@ -4,7 +4,7 @@ import { MessageDispatcher } from "../../interfaces/MessageDispatcher";
 import drawName from "../../names";
 
 export class IncrementArthurFowards {
-  static celebrationNumbers: number[] = [500, 800, 1000, 2000];
+  static celebrationNumbers: number[] = [500, 666, 800, 1000, 2000];
 
   constructor(
     private messageDispatcher: MessageDispatcher,

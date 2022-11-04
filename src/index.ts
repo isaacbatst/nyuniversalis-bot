@@ -1,14 +1,10 @@
 import createBot from './bot';
-import handleEvents from './useCases/botEvents';
-import { BOT_TOKEN } from './env';
 import { connect } from './database';
-import { PersonModel } from './database/Entities/Person/Person';
-
+import { BOT_TOKEN } from './env';
+import handleEvents from './useCases/botEvents';
 
 try {
-
   main();
-
 } catch (error) {
   console.log(error)
 }

@@ -55,3 +55,18 @@ it('should return missing 10 to 666 celebration message', async () => {
   expect(messageDispatcher.sendMessage).toBeCalledWith(1, `Caro monkey, favor apressar pra chegar nos 666, para curtirmos a festa em paz! Ass.: Bot Boêmio do Telegram 🎃`);
 
 })
+
+it('should return at 666 celebration message', async () => {
+  const number = 666
+  const messageDispatcher = new FakeMessageDispatcher();
+  PersonModel.getCounter = jest.fn().mockResolvedValue(number);
+  PersonModel.getNicknames = jest.fn().mockResolvedValue(['arthur']);
+
+  const celebrationCalculator = CelebrationCalculatorFactory.make()
+  const incrementArthurFowards = new IncrementArthurFowards(messageDispatcher, celebrationCalculator)
+  await incrementArthurFowards.execute(1);
+
+  expect(messageDispatcher.sendMessage).toBeCalledTimes(2);
+  expect(messageDispatcher.sendMessage).toBeCalledWith(1, `${number}!!!! \n TA NA HORA TA NA HORA \n 🎃 TA NA HORA DE MAMAR 🎃`);
+
+})
