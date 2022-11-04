@@ -1,13 +1,22 @@
-import TelegramBot from "node-telegram-bot-api";
 import { PersonModel } from "../../database/Entities/Person/Person";
 import drawName from "../../names";
 
-const celebrationNumbers: number[] = [500, 1000, 2000];
+const celebrationNumbers: number[] = [500, 800, 1000, 2000];
 
 const differenceTenMessage = (number: number) => `A essa altura espero que o role dos ${number} já tenha data, local e atrações confirmadas`
 const differenceTenPercentMessage = (number: number) => `Quase nos ${number}, podem começar a marcar o churrasco, vai ser na casa de quem?`
 
-export const incrementArthurFowards = async (message: TelegramBot.Message, bot: TelegramBot) => {
+interface Message {
+  chat: {
+    id: number
+  }
+}
+
+interface MessageDispatcher {
+  sendMessage(chatId: string | number, message: string): Promise<void>
+}
+
+export const incrementArthurFowards = async (message: Message, bot: MessageDispatcher) => {
   const name = 'Arthur';
 
   await PersonModel.incrementCounter(name);
