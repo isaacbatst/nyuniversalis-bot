@@ -28,7 +28,12 @@ export class IncrementArthurFowards {
   
     let celebrationMessage: string | undefined;
 
+    
     for(const number of IncrementArthurFowards.celebrationNumbers){
+      if(counter === 656) {
+        celebrationMessage = 'Caro monkey, favor apressar pra chegar nos 666, para curtirmos a festa em paz! Ass.: Bot Boêmio do Telegram 🎃'
+        break;
+      }
       const calculated = this.celebrationCalculator.calculate(counter, number);
       if(calculated){
         celebrationMessage =  calculated
