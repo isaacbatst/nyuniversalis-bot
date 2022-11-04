@@ -1,51 +1,43 @@
 import { PersonModel } from "../../database/Entities/Person/Person";
+import { CelebrationCalculator } from "../../entities/CelebrationCalculator";
+import { MessageDispatcher } from "../../interfaces/MessageDispatcher";
 import drawName from "../../names";
 
-const celebrationNumbers: number[] = [500, 800, 1000, 2000];
+export class IncrementArthurFowards {
+  static celebrationNumbers: number[] = [500, 800, 1000, 2000];
 
-const differenceTenMessage = (number: number) => `A essa altura espero que o role dos ${number} já tenha data, local e atrações confirmadas`
-const differenceTenPercentMessage = (number: number) => `Quase nos ${number}, podem começar a marcar o churrasco, vai ser na casa de quem?`
+  constructor(
+    private messageDispatcher: MessageDispatcher,
+    private celebrationCalculator: CelebrationCalculator,
+    private model = PersonModel,
+  ){
 
-interface Message {
-  chat: {
-    id: number
   }
-}
 
-interface MessageDispatcher {
-  sendMessage(chatId: string | number, message: string): Promise<void>
-}
+  async execute(chatId: string | number) {
+    const name = 'Arthur';
 
-export const incrementArthurFowards = async (message: Message, bot: MessageDispatcher) => {
-  const name = 'Arthur';
+    await this.model.incrementCounter(name);
+    const counter = await this.model.getCounter(name);
+  
+    const nicknames = await this.model.getNicknames(name);
+    const nickname = drawName(nicknames);
+  
+    await this.messageDispatcher
+      .sendMessage(chatId, `${nickname} dividiu e compartilhou ${counter} vezes`)
+  
+    let celebrationMessage: string | undefined;
 
-  await PersonModel.incrementCounter(name);
-  const counter = await PersonModel.getCounter(name);
-
-  const nicknames = await PersonModel.getNicknames(name);
-  const nickname = drawName(nicknames);
-
-  const celebrationMessage = celebrationNumbers.reduce<string | null>((acc, number) => {
-    if(acc) return acc;
-
-    const isDifferenceTenPercent = (number - counter) === (number * 0.1);
-    
-    if(isDifferenceTenPercent){
-      return differenceTenPercentMessage(number)
+    for(const number of IncrementArthurFowards.celebrationNumbers){
+      const calculated = this.celebrationCalculator.calculate(counter, number);
+      if(calculated){
+        celebrationMessage =  calculated
+        break;
+      }
     }
 
-    const isDifferenceTen = (number - counter) === 10;
-
-    if(isDifferenceTen) {
-      return differenceTenMessage(number)
+    if(celebrationMessage) {
+      await this.messageDispatcher.sendMessage(chatId, celebrationMessage)
     }
-
-    return null;
-  }, null)
-
-  await bot.sendMessage(message.chat.id, `${nickname} dividiu e compartilhou ${counter} vezes`)
-
-  if(celebrationMessage) {
-    await bot.sendMessage(message.chat.id, celebrationMessage)
   }
 }
