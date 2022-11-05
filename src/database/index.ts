@@ -16,6 +16,7 @@ export function connect() {
   if(!uri) throw new Error('MONGO_URI_NOT_DEFINED');
 
   Mongoose.connect(uri, {
+    useNewUrlParser: true,
     useUnifiedTopology: true
   })
 
