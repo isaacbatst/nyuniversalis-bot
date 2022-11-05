@@ -1,5 +1,8 @@
 import { Model, Schema, model } from "mongoose";
-import { DB_COLLECTION } from "../../../env";
+import dotenv from 'dotenv';
+dotenv.config();
+
+if(!process.env.DB_COLLECTION) throw new Error('DB_COLLECTION_NOT_FOUND')
 
 export interface Person {
   name: string,
@@ -22,7 +25,7 @@ const schema = new Schema<Person, IPersonModel>({
   counter: Number,
   counterAmourant: Number
 }, {
-  collection: DB_COLLECTION
+  collection: process.env.DB_COLLECTION
 })
 
 schema.statics.getNicknames = async function getNicknames(this: IPersonModel, name: string): Promise<string[]> {
