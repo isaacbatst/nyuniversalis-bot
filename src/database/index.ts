@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import Mongoose from "mongoose";
 
 let connection: Mongoose.Connection;
