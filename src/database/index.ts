@@ -2,17 +2,21 @@ import Mongoose from "mongoose";
 
 let connection: Mongoose.Connection;
 
-const uri = process.env.DB_URI || '';
+const uri = process.env.DB_URI;
+
 
 export function connect() {
   if (connection) {
     return connection;
   }
+  
+  if(!uri) throw new Error('MONGO_URI_NOT_DEFINED');
 
   Mongoose.connect(uri, {
-    useNewUrlParser: true,
     useUnifiedTopology: true
   })
+
+  console.log('connecting to: ', uri);
 
   connection = Mongoose.connection;
 
