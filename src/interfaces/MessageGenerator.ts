@@ -1,3 +1,3 @@
 export interface MessageGenerator {
-  generateArthurMessage(): Promise<string>
+  generateArthurMessage(nickname: string): Promise<string>
 }

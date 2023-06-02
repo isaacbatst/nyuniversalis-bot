@@ -3,10 +3,11 @@ import { getArthurFowards } from "./botEvents/getArthurFowards";
 import { getLuanAmouranth } from "./botEvents/getLuanAmouranth";
 import { getLuanKitchen } from "./botEvents/getLuanKitchen";
 import { handleUserMessage } from "./botEvents/handleUserMessage";
+import { IncrementArthurFowards } from "./botEvents/incrementArthurFowards";
 import { incrementLuanKitchen } from "./botEvents/incrementLuanKitchen";
 
-function handleEvents(bot: TelegramBot) {
-  bot.on('message', (message) => handleUserMessage(message, bot))
+function setupEventListeners(bot: TelegramBot, incrementArthurFowards: IncrementArthurFowards) {
+  bot.on('message', (message) => handleUserMessage(message, bot, incrementArthurFowards))
 
   bot.onText(/\/luan_na_cozinha/, (message) => incrementLuanKitchen(message, bot))
 
@@ -15,4 +16,4 @@ function handleEvents(bot: TelegramBot) {
   bot.onText(/\/qnts_macaco/, (message) => getArthurFowards(message, bot))
 }
 
-export default handleEvents;
+export default setupEventListeners;

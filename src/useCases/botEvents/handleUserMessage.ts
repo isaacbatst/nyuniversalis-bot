@@ -3,22 +3,19 @@ import { TelegramBotMessageDispatchAdapter } from "../../adapters/TelegramBotMes
 import { CelebrationCalculatorFactory } from "../../entities/CelebrationCalculatorFactory";
 import { IncrementArthurFowards } from "./incrementArthurFowards";
 import { incrementLuanAmouranth } from "./incrementLuanAmouranth";
+import { MessageGeneratorOpenAi } from "../../infra/MessageGenerator/MessageGeneratorOpenAi";
 
 const ARTHUR_USERNAME = 'Arthur_HOS';
 const LUAN_FIRST_NAME = 'Luamboru'
 
-export const handleUserMessage = async (message: TelegramBot.Message, bot: TelegramBot) => {
+export const handleUserMessage = async (message: TelegramBot.Message, bot: TelegramBot, incrementArthurFowards: IncrementArthurFowards) => {
   if (!message.from) {
     return
   }
 
   // log users info
   console.log(message.from);
-
   if (message.from.username === ARTHUR_USERNAME && message.forward_date) {
-    const celebrationCalculator = CelebrationCalculatorFactory.make();
-    const messageDispatcher = new TelegramBotMessageDispatchAdapter(bot)
-    const incrementArthurFowards = new IncrementArthurFowards(messageDispatcher, celebrationCalculator)
     return incrementArthurFowards.execute(message.chat.id)
   }
 
