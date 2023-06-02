@@ -53,12 +53,13 @@ schema.statics.getCounter = async function getCounter(this: IPersonModel, name: 
 schema.statics.incrementCounter = async function incrementCounter(this: IPersonModel, name: string): Promise<void> {
   const person = await this.findOne({ name });
 
-  if (person) {
-    await this.updateOne({ name }, { counter: person.counter + 1 });
-    return;
+  if(!person) {
+    await this.create({ name, nicknames: ['anon'], counter: 1 });
   }
 
-  throw new Error('not found');
+  if (person) {
+    await this.updateOne({ name }, { counter: person.counter + 1 });
+  }
 }
 
 schema.statics.getCounterAmouranth = async function getCounterAmouranth(this: IPersonModel, name: string): Promise<number> {

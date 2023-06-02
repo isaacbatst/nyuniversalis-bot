@@ -9,7 +9,7 @@ type MessageGeneratorOpenAiParams = {
 
 export class MessageGeneratorOpenAi implements MessageGenerator {
   openAiApi: OpenAIApi
-  arthurActionMessage: string;
+  arthurSetupMessage: string;
   luanSetupMessage: string;
   fallbackGenerator = new MessageGeneratorStatic()
 
@@ -19,7 +19,6 @@ export class MessageGeneratorOpenAi implements MessageGenerator {
     })
     
     this.openAiApi = new OpenAIApi(configuration)
-    this.arthurActionMessage = 'Um amigo acabou de compartilhar um meme, reaja a ele.'
     this.luanSetupMessage = "Você é um bot imitando um jovem conversando em redes sociais. "
 + "Você responde quando um amigo compartilha um canal de uma streamer e faz uma piada sarcástica com o conteúdo dela. " 
 + "Suas respostas tem TODAS características a seguir:" 
@@ -31,14 +30,15 @@ export class MessageGeneratorOpenAi implements MessageGenerator {
 + " - Não usa # \n"
 + " - Chama amigo pelo nome dele."
 + " - Tem uma referência ao conteúdo da stream que foi compartilhada."
+
+    this.arthurSetupMessage = `Você é um bot que reage quando um amigo compartilha um meme no grupo. \
+Suas mensagens tem no máximo 15 palavras. As mensagens tem todas as letras minúsculas. Sua mensagem pode ser sarcástica. \
+A linguagem deve ser coloquial. A mensagem será como as mensagens de jovens em redes sociais, sem letras maiúsculas, \
+com emojis e escrita com abreviações. Suas mensagens podem usar gírias como: fmz, slc, top, nice. Sua mensagem deve ter uma piada com o nome dele.`
   }
 
-  private makeArthurSetupMessage(name: string): string {
-    return `Você é um bot que reage quando um amigo compartilha algo no grupo. \
-Suas mensagens tem apenas uma ou duas frases, com tom humorístico, elas não tem letras maiúsculas e tem 50% de chance de serem sarcásticas. \
-A linguagem deve ser coloquial. A mensagem será como as mensagens de jovens em redes sociais, sem letras maiúsculas, \
-com emojis e escrita com abreviações. Suas mensagens usam gírias como: fmz, slc, top, nice. \
-Chame o autor do meme de ${name.toLowerCase()}`
+  private makeArthurActionMessage(name: string): string {
+    return `${name.toLowerCase()} acabou de compartilhar um meme no grupo.`
   }
 
   private makeLuanActionMessage(name: string, channelUrl: string): string {
@@ -56,7 +56,7 @@ Chame o autor do meme de ${name.toLowerCase()}`
         ],
         max_tokens: 50,
       })
-  
+      
       const [firstChoice] = data.choices
   
       if(!firstChoice.message) {
@@ -75,8 +75,8 @@ Chame o autor do meme de ${name.toLowerCase()}`
         model: 'gpt-3.5-turbo',
         temperature: 1,
         messages: [
-          {role: 'system', content: this.makeArthurSetupMessage(nickname) },
-          {role: 'system', content: this.arthurActionMessage }
+          {role: 'system', content: this.arthurSetupMessage },
+          {role: 'user', content: this.makeArthurActionMessage(nickname) }
         ],
         max_tokens: 50,
       })
