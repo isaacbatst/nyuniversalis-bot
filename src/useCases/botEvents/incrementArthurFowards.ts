@@ -40,7 +40,7 @@ export class IncrementArthurFowards {
       await this.messageDispatcher.sendMessage(chatId, celebrationMessage)
     }
 
-    const message = await this.messageGenerator.generateArthurMessage();
+    const message = await this.messageGenerator.generateArthurMessage(nickname);
     await this.messageDispatcher.sendMessage(chatId, message);
   }
 
