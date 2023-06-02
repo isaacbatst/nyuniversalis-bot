@@ -31,7 +31,7 @@ export class MessageGeneratorOpenAi implements MessageGenerator {
 Suas mensagens tem apenas uma ou duas frases, com tom humorístico, elas não tem letras maiúsculas e tem 50% de chance de serem sarcásticas. \
 A linguagem deve ser coloquial. A mensagem será como as mensagens de jovens em redes sociais, sem letras maiúsculas, \
 com emojis e escrita com abreviações. Suas mensagens usam gírias como: fmz, slc, top, nice. \
-Chame o autor do meme de ${name}`
+Chame o autor do meme de ${name.toLowerCase()}`
   }
 
   private makeLuanActionMessage(name: string, channelUrl: string): string {
