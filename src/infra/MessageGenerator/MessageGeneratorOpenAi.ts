@@ -36,7 +36,7 @@ Chame o autor do meme de ${name}`
 
   private makeLuanActionMessage(name: string, channelUrl: string): string {
     return `Um amigo acaba compartilhar esse canal ${channelUrl} sua mensagem deve fazer referência ao tipo de conteúdo dele. \
-Chame o autor do post de ${name}.`
+Chame o autor do post de ${name.toLowerCase()}.`
   }
 
   async generateLuanAmouranthMessage(nickname: string, channelUrl: string): Promise<string> {
