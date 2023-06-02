@@ -3,7 +3,7 @@ import { IncrementArthurFowards } from "./incrementArthurFowards";
 import IncrementLuanAmouranth from "./incrementLuanAmouranth";
 
 const ARTHUR_USERNAME = 'Arthur_HOS';
-const LUAN_FIRST_NAME = 'Isaac'
+const LUAN_FIRST_NAME = 'Luamboru'
 
 export const handleUserMessage = async (
   message: TelegramBot.Message, 
