@@ -1,72 +1,59 @@
 import { PersonModel } from "../../database/Entities/Person/Person";
+import { CelebrationCalculator } from "../../entities/CelebrationCalculator";
 import { CelebrationCalculatorFactory } from "../../entities/CelebrationCalculatorFactory";
+import MessageGeneratorStatic from "../../infra/MessageGenerator/MessageGeneratorStatic";
 import { MessageDispatcher } from "../../interfaces/MessageDispatcher";
-import { IncrementArthurFowards } from "./incrementArthurFowards";
-
-jest.mock('../../database/Entities/Person/Person')
+import { IncrementArthurFowards, IncrementArthurFowardsModel } from "./incrementArthurFowards";
 
 class FakeMessageDispatcher implements MessageDispatcher {
-  sendMessage = jest.fn(async (chatId: string | number, message: string) => {
-    console.log(`Faker sending to: ${chatId}`);
-    console.log(`Message: ${message}`);
+  sendMessage = jest.fn()
+}
+
+class FakeModel implements IncrementArthurFowardsModel {
+  counter = 0
+
+  getCounter = jest.fn(async () => this.counter)
+  getNicknames = jest.fn(async () => ['arthur'])
+  incrementCounter = jest.fn(async () => {
+    this.counter++
   })
 }
 
-it('should return missing ten celebration message', async () => {
-  const number = 500;
-  const messageDispatcher = new FakeMessageDispatcher();
-  PersonModel.getCounter = jest.fn().mockResolvedValue(490);
-  PersonModel.getNicknames = jest.fn().mockResolvedValue(['arthur']);
+describe('IncrementArthurFowards', () => {
+  let incrementArthurFowards: IncrementArthurFowards;
+  let messageDispatcher: FakeMessageDispatcher;
+  let model: FakeModel;
+  let messageGenerator: MessageGeneratorStatic
+  let celebrationCalculator: CelebrationCalculator
 
-  const celebrationCalculator = CelebrationCalculatorFactory.make()
-  const incrementArthurFowards = new IncrementArthurFowards(messageDispatcher, celebrationCalculator)
-  await incrementArthurFowards.execute(1);
+  beforeEach(() => {
+    messageDispatcher = new FakeMessageDispatcher();
+    celebrationCalculator = CelebrationCalculatorFactory.make()
+    model = new FakeModel();
+    messageGenerator = new MessageGeneratorStatic();
+    incrementArthurFowards = new IncrementArthurFowards(messageDispatcher, celebrationCalculator, messageGenerator, model)
+  })
 
-  expect(messageDispatcher.sendMessage).toBeCalledTimes(2);
-  expect(messageDispatcher.sendMessage).toBeCalledWith(1, `A essa altura espero que o role dos ${number} já tenha data, local e atrações confirmadas`);
+  it('should return missing ten celebration message', async () => {
+    const number = 500;
+    model.counter = 489;
+    await incrementArthurFowards.execute(1);
 
-})
+    expect(messageDispatcher.sendMessage).toBeCalledTimes(3);
+    expect(messageDispatcher.sendMessage).toBeCalledWith(1, `A essa altura espero que o role dos ${number} já tenha data, local e atrações confirmadas`);
+  })
 
-it('should return missing ten percent celebration message', async () => {
-  const number = 500;
-  const messageDispatcher = new FakeMessageDispatcher();
-  PersonModel.getCounter = jest.fn().mockResolvedValue(450);
-  PersonModel.getNicknames = jest.fn().mockResolvedValue(['arthur']);
+  it('should return missing ten percent celebration message', async () => {
+    const number = 500;
+    model.counter = 449;
+    await incrementArthurFowards.execute(1);
+    expect(messageDispatcher.sendMessage).toBeCalledTimes(3);
+    expect(messageDispatcher.sendMessage).toBeCalledWith(1, `Quase nos ${number}, podem começar a marcar o churrasco, vai ser na casa de quem?`);
+  })
 
-  const celebrationCalculator = CelebrationCalculatorFactory.make()
-  const incrementArthurFowards = new IncrementArthurFowards(messageDispatcher, celebrationCalculator)
-  await incrementArthurFowards.execute(1);
-
-  expect(messageDispatcher.sendMessage).toBeCalledTimes(2);
-  expect(messageDispatcher.sendMessage).toBeCalledWith(1, `Quase nos ${number}, podem começar a marcar o churrasco, vai ser na casa de quem?`);
-
-})
-
-it('should return missing 10 to 666 celebration message', async () => {
-  const messageDispatcher = new FakeMessageDispatcher();
-  PersonModel.getCounter = jest.fn().mockResolvedValue(656);
-  PersonModel.getNicknames = jest.fn().mockResolvedValue(['arthur']);
-
-  const celebrationCalculator = CelebrationCalculatorFactory.make()
-  const incrementArthurFowards = new IncrementArthurFowards(messageDispatcher, celebrationCalculator)
-  await incrementArthurFowards.execute(1);
-
-  expect(messageDispatcher.sendMessage).toBeCalledTimes(2);
-  expect(messageDispatcher.sendMessage).toBeCalledWith(1, `Caro monkey, favor apressar pra chegar nos 666, para curtirmos a festa em paz! Ass.: Bot Boêmio do Telegram 🎃`);
-
-})
-
-it('should return at 666 celebration message', async () => {
-  const number = 666
-  const messageDispatcher = new FakeMessageDispatcher();
-  PersonModel.getCounter = jest.fn().mockResolvedValue(number);
-  PersonModel.getNicknames = jest.fn().mockResolvedValue(['arthur']);
-
-  const celebrationCalculator = CelebrationCalculatorFactory.make()
-  const incrementArthurFowards = new IncrementArthurFowards(messageDispatcher, celebrationCalculator)
-  await incrementArthurFowards.execute(1);
-
-  expect(messageDispatcher.sendMessage).toBeCalledTimes(2);
-  expect(messageDispatcher.sendMessage).toBeCalledWith(1, `${number}!!!! \n TA NA HORA TA NA HORA \n 🎃 TA NA HORA DE MAMAR 🎃`);
-
+  it('should send generated message', async () => {
+    await incrementArthurFowards.execute(1);
+    expect(messageDispatcher.sendMessage).toBeCalledTimes(2);
+    expect(messageDispatcher.sendMessage).toBeCalledWith(1, `Valeu, cabo!`);
+  })
 })

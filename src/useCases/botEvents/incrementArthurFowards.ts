@@ -1,7 +1,14 @@
 import { PersonModel } from "../../database/Entities/Person/Person";
 import { CelebrationCalculator } from "../../entities/CelebrationCalculator";
 import { MessageDispatcher } from "../../interfaces/MessageDispatcher";
+import { MessageGenerator } from "../../interfaces/MessageGenerator";
 import drawName from "../../names";
+
+export interface IncrementArthurFowardsModel {
+  getCounter(name: string): Promise<number>;
+  getNicknames(name: string): Promise<string[]>
+  incrementCounter(name: string): Promise<void>
+}
 
 export class IncrementArthurFowards {
   static celebrationNumbers: number[] = [500, 666, 800, 1000, 2000];
@@ -9,7 +16,8 @@ export class IncrementArthurFowards {
   constructor(
     private messageDispatcher: MessageDispatcher,
     private celebrationCalculator: CelebrationCalculator,
-    private model = PersonModel,
+    private messageGenerator: MessageGenerator,
+    private model: IncrementArthurFowardsModel = PersonModel,
   ){
 
   }
@@ -26,23 +34,22 @@ export class IncrementArthurFowards {
     await this.messageDispatcher
       .sendMessage(chatId, `${nickname} dividiu e compartilhou ${counter} vezes`)
   
-    let celebrationMessage: string | undefined;
-
-    
-    for(const number of IncrementArthurFowards.celebrationNumbers){
-      if(counter === 656) {
-        celebrationMessage = 'Caro monkey, favor apressar pra chegar nos 666, para curtirmos a festa em paz! Ass.: Bot Boêmio do Telegram 🎃'
-        break;
-      }
-      const calculated = this.celebrationCalculator.calculate(counter, number);
-      if(calculated){
-        celebrationMessage =  calculated
-        break;
-      }
-    }
+    const celebrationMessage = this.getCelebrationMessage(counter);
 
     if(celebrationMessage) {
       await this.messageDispatcher.sendMessage(chatId, celebrationMessage)
+    }
+
+    const message = await this.messageGenerator.generateArthurMessage();
+    await this.messageDispatcher.sendMessage(chatId, message);
+  }
+
+  private getCelebrationMessage(counter: number): string | undefined {
+    for(const number of IncrementArthurFowards.celebrationNumbers){
+      const calculated = this.celebrationCalculator.calculate(counter, number);
+      if(calculated){
+        return calculated
+      }
     }
   }
 }
