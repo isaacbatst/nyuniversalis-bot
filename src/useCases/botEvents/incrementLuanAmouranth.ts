@@ -1,15 +1,29 @@
-import TelegramBot from "node-telegram-bot-api";
 import { PersonModel } from "../../database/Entities/Person/Person";
+import { MessageDispatcher } from "../../interfaces/MessageDispatcher";
+import { MessageGenerator } from "../../interfaces/MessageGenerator";
 import drawName from "../../names";
 
-export const incrementLuanAmouranth = async (message: TelegramBot.Message, bot: TelegramBot) => {
-  const name = 'Luan';
+export default class IncrementLuanAmouranth {
+  constructor(
+    private messageDispatcher: MessageDispatcher,
+    private messageGenerator: MessageGenerator
+  ){}
 
-  await PersonModel.incrementCounterAmouranth(name);
-  const counter = await PersonModel.getCounterAmouranth(name);
+  async execute(chatId: string | number, channelUrl: string) {
+    const name = 'Luan';
 
-  const nicknames = await PersonModel.getNicknames(name);
-  const nickname = drawName(nicknames);
+    await PersonModel.incrementCounterAmouranth(name);
+    const counter = await PersonModel.getCounterAmouranth(name);
+  
+    const nicknames = await PersonModel.getNicknames(name);
+    const nickname = drawName(nicknames);
+    await this.messageDispatcher.sendMessage(
+      chatId, `${nickname} dividiu e compartilhou ${counter} vezes`
+    )
 
-  return bot.sendMessage(message.chat.id, `${nickname} dividiu e compartilhou ${counter} vezes`)
+    const message = await this.messageGenerator.generateLuanAmouranthMessage(nickname, channelUrl);
+    await this.messageDispatcher.sendMessage(
+      chatId, message
+    )
+  }
 }

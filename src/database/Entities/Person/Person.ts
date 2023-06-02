@@ -1,5 +1,5 @@
-import { Model, Schema, model } from "mongoose";
 import dotenv from 'dotenv';
+import { Model, Schema, model } from "mongoose";
 dotenv.config();
 
 if(!process.env.DB_COLLECTION) throw new Error('DB_COLLECTION_NOT_FOUND')
@@ -35,7 +35,9 @@ schema.statics.getNicknames = async function getNicknames(this: IPersonModel, na
     return person.nicknames;
   }
 
-  throw new Error('not found')
+  this.create({ name, nicknames: ['anon'], counter: 0 });
+
+  return ['anon'];
 };
 
 schema.statics.getCounter = async function getCounter(this: IPersonModel, name: string): Promise<number> {
@@ -66,18 +68,25 @@ schema.statics.getCounterAmouranth = async function getCounterAmouranth(this: IP
     return person.counterAmourant
   }
 
-  throw new Error('not found');
+  await this.create({ name, counterAmourant: 0, nicknames: ['anon'] });
+
+  return 0
 }
 
 schema.statics.incrementCounterAmouranth = async function incrementCounterAmouranth(this: IPersonModel, name: string): Promise<void> {
   const person = await this.findOne({ name });
+
+  if(person && !person.counterAmourant){
+    await this.updateOne({ name }, { counterAmourant: 1 });
+    return;
+  }
 
   if (person && person.counterAmourant) {
     await this.updateOne({ name }, { counterAmourant: person.counterAmourant + 1 });
     return;
   }
 
-  throw new Error('not found');
+  await this.create({ name, counterAmourant: 1, nicknames: ['anon'] });
 }
 
 export const PersonModel = model<Person, IPersonModel>('Person', schema);

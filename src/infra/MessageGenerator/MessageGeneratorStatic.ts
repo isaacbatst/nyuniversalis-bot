@@ -4,4 +4,8 @@ export default class MessageGeneratorStatic implements MessageGenerator {
   generateArthurMessage(): Promise<string> {
     return Promise.resolve('Valeu, cabo!');
   }
+
+  generateLuanAmouranthMessage(): Promise<string> {
+    return Promise.resolve(':furry:');
+  }
 }

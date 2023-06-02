@@ -1,6 +1,6 @@
 import createBot from './bot';
 import { connect } from './database';
-import { BOT_TOKEN, OPEN_AI_API_KEY } from './env';
+import { ARTHUR_FALLBACK_MESSAGE, BOT_TOKEN, LUAN_FALLBACK_MESSAGE, OPEN_AI_API_KEY } from './env';
 import setupEventListeners from './useCases/botEvents';
 import { PersonModel } from './database/Entities/Person/Person';
 import { TelegramBotMessageDispatchAdapter } from './adapters/TelegramBotMessageDispatcherAdapter';
@@ -8,6 +8,7 @@ import bot from './bot';
 import { CelebrationCalculatorFactory } from './entities/CelebrationCalculatorFactory';
 import { MessageGeneratorOpenAi } from './infra/MessageGenerator/MessageGeneratorOpenAi';
 import { IncrementArthurFowards } from './useCases/botEvents/incrementArthurFowards';
+import IncrementLuanAmouranth from './useCases/botEvents/incrementLuanAmouranth';
 
 try {
   main();
@@ -28,12 +29,11 @@ async function main() {
   const celebrationCalculator = CelebrationCalculatorFactory.make();
   const generator = new MessageGeneratorOpenAi({
     apiKey: OPEN_AI_API_KEY,
-    fallbackMessage: 'Fallback'
   });
   const incrementArthurFowards = new IncrementArthurFowards(messageDispatcher, celebrationCalculator, generator)
-
+  const incrementLuanAmourant = new IncrementLuanAmouranth(messageDispatcher, generator)
   connect();
-  setupEventListeners(bot, incrementArthurFowards);
+  setupEventListeners(bot, incrementArthurFowards, incrementLuanAmourant);
 }
 
 
