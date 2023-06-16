@@ -4,7 +4,7 @@ import IncrementLuanAmouranth from "./incrementLuanAmouranth";
 import IncrementIrineuCounter from "./incrementIrineuCounter";
 
 const ARTHUR_USERNAME = 'Arthur_HOS';
-const IRINEU_USERNAME = 'isaacbatst' // irimeu
+const IRINEU_USERNAME = 'irimeu'
 const LUAN_FIRST_NAME = 'Luamboru'
 
 export const handleUserMessage = async (
