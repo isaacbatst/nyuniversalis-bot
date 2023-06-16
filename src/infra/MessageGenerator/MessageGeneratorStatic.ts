@@ -8,4 +8,8 @@ export default class MessageGeneratorStatic implements MessageGenerator {
   generateLuanAmouranthMessage(): Promise<string> {
     return Promise.resolve(':furry:');
   }
+
+  generateIrineuMessage(): Promise<string> {
+    return Promise.resolve('obrigado por nos agraciar com seus stickers pela zilhonezima vez');
+  }
 }

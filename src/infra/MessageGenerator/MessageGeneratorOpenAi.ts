@@ -11,6 +11,7 @@ export class MessageGeneratorOpenAi implements MessageGenerator {
   openAiApi: OpenAIApi
   arthurSetupMessage: string;
   luanSetupMessage: string;
+  irineuSetupMessage: string;
   fallbackGenerator = new MessageGeneratorStatic()
 
   constructor(params: MessageGeneratorOpenAiParams) {
@@ -35,6 +36,16 @@ export class MessageGeneratorOpenAi implements MessageGenerator {
 Suas mensagens tem no máximo 15 palavras. As mensagens tem todas as letras minúsculas. Sua mensagem pode ser sarcástica. \
 A linguagem deve ser coloquial. A mensagem será como as mensagens de jovens em redes sociais, sem letras maiúsculas, \
 com emojis e escrita com abreviações. Suas mensagens podem usar gírias como: fmz, slc, top, nice. Sua mensagem deve ter uma piada com o nome dele.`
+
+    this.irineuSetupMessage = 'Você que informa quantas vezes alguém enviou um sticker do pica pau.'
++'Suas mensagens reagem a quando um amigo envia um skicker do pica pau, informando quantas vezes ele já compartilhou esse sticker com uma piadinha e emojis. '
++ "Suas mensagens tem TODAS características a seguir:" 
++ " - No máximo 15 palavras. \n"
++ " - Tem todas as letras minúsculas. \n"
++ " - Usa emojis e palavras abreviadas, como os jovens conversam em redes sociais. \n"
++ " - Usa gírias como: 'fmz', 'slc', 'top', 'nice'. \n"
++ " - Não usa hashtags. \n"
++ " - Não usa # \n"
   }
 
   private makeArthurActionMessage(name: string): string {
@@ -43,6 +54,38 @@ com emojis e escrita com abreviações. Suas mensagens podem usar gírias como: 
 
   private makeLuanActionMessage(name: string, channelUrl: string): string {
     return `${name.toLowerCase()}: ${channelUrl}`
+  }
+
+  private makeIrineuActionMessage(name: string, counter: number): string {
+    return `${name.toLowerCase()} acabou de enviar o sticker do pica pau ${counter} vezes.`
+  }
+
+  async generateIrineuMessage(nickname: string, counter: number): Promise<string> {
+    try {
+      const {data} = await this.openAiApi.createChatCompletion({
+        model: 'gpt-3.5-turbo',
+        temperature: 1.2,
+        messages: [
+          {role: 'system', content: this.irineuSetupMessage },
+          {role: 'user', content: this.makeIrineuActionMessage(nickname, counter) }
+        ],
+        max_tokens: 50,
+      })
+      
+      const [firstChoice] = data.choices
+  
+      if(!firstChoice.message) {
+        throw new Error('Error generating message')
+      }
+
+      if(firstChoice.message.content.startsWith('"')) {
+        return firstChoice.message.content.split('"')[1]
+      }
+  
+      return firstChoice.message.content.toLowerCase()
+    } catch (err) {
+      return this.fallbackGenerator.generateIrineuMessage()
+    }
   }
 
   async generateLuanAmouranthMessage(nickname: string, channelUrl: string): Promise<string> {

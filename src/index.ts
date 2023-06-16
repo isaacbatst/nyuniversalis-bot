@@ -9,6 +9,7 @@ import { CelebrationCalculatorFactory } from './entities/CelebrationCalculatorFa
 import { MessageGeneratorOpenAi } from './infra/MessageGenerator/MessageGeneratorOpenAi';
 import { IncrementArthurFowards } from './useCases/botEvents/incrementArthurFowards';
 import IncrementLuanAmouranth from './useCases/botEvents/incrementLuanAmouranth';
+import IncrementIrineuCounter from './useCases/botEvents/incrementIrineuCounter';
 
 try {
   main();
@@ -32,8 +33,9 @@ async function main() {
   });
   const incrementArthurFowards = new IncrementArthurFowards(messageDispatcher, celebrationCalculator, generator)
   const incrementLuanAmourant = new IncrementLuanAmouranth(messageDispatcher, generator)
+  const incrementIrineuCounter = new IncrementIrineuCounter(messageDispatcher, generator)
   connect();
-  setupEventListeners(bot, incrementArthurFowards, incrementLuanAmourant);
+  setupEventListeners(bot, incrementArthurFowards, incrementLuanAmourant, incrementIrineuCounter);
 }
 
 

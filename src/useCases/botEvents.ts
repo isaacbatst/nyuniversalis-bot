@@ -6,13 +6,15 @@ import { handleUserMessage } from "./botEvents/handleUserMessage";
 import { IncrementArthurFowards } from "./botEvents/incrementArthurFowards";
 import { incrementLuanKitchen } from "./botEvents/incrementLuanKitchen";
 import IncrementLuanAmouranth from "./botEvents/incrementLuanAmouranth";
+import IncrementIrineuCounter from "./botEvents/incrementIrineuCounter";
 
 function setupEventListeners(
   bot: TelegramBot, 
   incrementArthurFowards: IncrementArthurFowards,
-  incrementLuanAmourant: IncrementLuanAmouranth
+  incrementLuanAmourant: IncrementLuanAmouranth,
+  incrementIrineuCounter: IncrementIrineuCounter
 ) {
-  bot.on('message', (message) => handleUserMessage(message, incrementArthurFowards, incrementLuanAmourant))
+  bot.on('message', (message) => handleUserMessage(message, incrementArthurFowards, incrementLuanAmourant, incrementIrineuCounter))
   bot.onText(/\/luan_na_cozinha/, (message) => incrementLuanKitchen(message, bot))
   bot.onText(/\/qnts_na_cozinha/, (message) => getLuanKitchen(message, bot))
   bot.onText(/\/qnts_amouranth/, (message) => getLuanAmouranth(message, bot))
