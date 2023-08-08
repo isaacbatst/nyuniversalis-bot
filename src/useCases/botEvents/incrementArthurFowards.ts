@@ -22,7 +22,7 @@ export class IncrementArthurFowards {
 
   }
 
-  async execute(chatId: string | number) {
+  async execute(chatId: string | number, forwardedFrom?: string) {
     const name = 'Arthur';
 
     await this.model.incrementCounter(name);
@@ -40,7 +40,7 @@ export class IncrementArthurFowards {
       await this.messageDispatcher.sendMessage(chatId, celebrationMessage)
     }
 
-    const message = await this.messageGenerator.generateArthurMessage(nickname);
+  const message = await this.messageGenerator.generateArthurMessage(nickname, forwardedFrom);
     await this.messageDispatcher.sendMessage(chatId, message);
   }
 

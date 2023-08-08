@@ -32,10 +32,11 @@ export class MessageGeneratorOpenAi implements MessageGenerator {
 + " - Chama amigo pelo nome dele."
 + " - Tem uma referência ao conteúdo da stream que foi compartilhada."
 
-    this.arthurSetupMessage = `Você é um bot que reage quando um amigo compartilha um meme no grupo. \
+    this.arthurSetupMessage = `Você é um bot que reage quando um amigo compartilha conteúdo no grupo. \
 Suas mensagens tem no máximo 15 palavras. As mensagens tem todas as letras minúsculas. Sua mensagem pode ser sarcástica. \
 A linguagem deve ser coloquial. A mensagem será como as mensagens de jovens em redes sociais, sem letras maiúsculas, \
-com emojis e escrita com abreviações. Suas mensagens podem usar gírias como: fmz, slc, top, nice. Sua mensagem deve ter uma piada com o nome dele.`
+com emojis e escrita com abreviações. Suas mensagens podem usar gírias como: fmz, slc, top, nice. \
+Sua mensagem deve ter uma piada com o nome dele.`
 
     this.irineuSetupMessage = 'Você que informa quantas vezes alguém enviou um sticker do pica pau.'
 +'Suas mensagens reagem a quando um amigo envia um skicker do pica pau, informando quantas vezes ele já compartilhou esse sticker com uma piadinha e emojis. '
@@ -48,7 +49,11 @@ com emojis e escrita com abreviações. Suas mensagens podem usar gírias como: 
 + " - Não usa # \n"
   }
 
-  private makeArthurActionMessage(name: string): string {
+  private makeArthurActionMessage(name: string, fowardedFrom?: string): string {
+    if(fowardedFrom) {
+      return `${name.toLowerCase()} acabou de compartilhar um conteúdo de "${fowardedFrom}".`
+    }
+
     return `${name.toLowerCase()} acabou de compartilhar um meme no grupo.`
   }
 
@@ -112,14 +117,14 @@ com emojis e escrita com abreviações. Suas mensagens podem usar gírias como: 
     }
   }
 
-  async generateArthurMessage(nickname: string): Promise<string> {
+  async generateArthurMessage(nickname: string, fowardedFrom?: string): Promise<string> {
     try {
       const {data} = await this.openAiApi.createChatCompletion({
         model: 'gpt-3.5-turbo',
         temperature: 1,
         messages: [
           {role: 'system', content: this.arthurSetupMessage },
-          {role: 'user', content: this.makeArthurActionMessage(nickname) }
+          {role: 'user', content: this.makeArthurActionMessage(nickname, fowardedFrom) }
         ],
         max_tokens: 50,
       })

@@ -7,6 +7,8 @@ const ARTHUR_USERNAME = 'Arthur_HOS';
 const IRINEU_USERNAME = 'irimeu'
 const LUAN_FIRST_NAME = 'Luamboru'
 
+let lastMessageDate: number | undefined;
+
 export const handleUserMessage = async (
   message: TelegramBot.Message, 
   incrementArthurFowards: IncrementArthurFowards,
@@ -16,15 +18,24 @@ export const handleUserMessage = async (
   if (!message.from) {
     return
   }
-  // log users info
-  console.log(message.from);
+  console.log(lastMessageDate, message.date)
+  if(lastMessageDate === message.date) {
+    return
+  }
+  lastMessageDate = message.date
+  // log message info
+  console.log(message);
 
   if(message.from.username === IRINEU_USERNAME && message.sticker && message.sticker.set_name ===  'AcervoPicaPau') {
     return incrementIrineuCounter.execute(message.chat.id)
   }
 
   if (message.from.username === ARTHUR_USERNAME && message.forward_date) {
-    return incrementArthurFowards.execute(message.chat.id)
+    const forwardFrom = message.forward_from_chat?.title 
+      ?? message.forward_from_chat?.username
+      ?? `${message.forward_from?.first_name} ${message.forward_from?.last_name}`
+      ?? message.forward_from?.username
+    return incrementArthurFowards.execute(message.chat.id, forwardFrom)
   }
 
   if(message.text?.includes('https://www.twitch.tv') && message.from.first_name === LUAN_FIRST_NAME) {
