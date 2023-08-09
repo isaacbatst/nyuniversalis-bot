@@ -13,6 +13,7 @@ export class MessageGeneratorOpenAi implements MessageGenerator {
   luanSetupMessage: string;
   irineuSetupMessage: string;
   fallbackGenerator = new MessageGeneratorStatic()
+  answerSetupMessage: string;
 
   constructor(params: MessageGeneratorOpenAiParams) {
     const configuration = new Configuration({
@@ -46,7 +47,11 @@ Sua mensagem deve ter uma piada com o nome dele.`
 + " - Usa emojis e palavras abreviadas, como os jovens conversam em redes sociais. \n"
 + " - Usa gírias como: 'fmz', 'slc', 'top', 'nice'. \n"
 + " - Não usa hashtags. \n"
-+ " - Não usa # \n"
++ " - Não usa # \n";
+
+    this.answerSetupMessage = `Você é um bot sarcastico e jovial que ao receber uma resposta em formato de texto, \
+continua a conversa usando memes, gírias, abreviações e emojis de forma sutil. \
+Se a resposta não for em formato de texto você responde com o meme "fala português alienígena fdp"`
   }
 
   private makeArthurActionMessage(name: string, fowardedFrom?: string): string {
@@ -75,6 +80,44 @@ Sua mensagem deve ter uma piada com o nome dele.`
           {role: 'user', content: this.makeIrineuActionMessage(nickname, counter) }
         ],
         max_tokens: 50,
+      })
+      
+      const [firstChoice] = data.choices
+  
+      if(!firstChoice.message) {
+        throw new Error('Error generating message')
+      }
+
+      if(firstChoice.message.content.startsWith('"')) {
+        return firstChoice.message.content.split('"')[1]
+      }
+  
+      return firstChoice.message.content.toLowerCase()
+    } catch (err) {
+      return this.fallbackGenerator.generateIrineuMessage()
+    }
+  }
+
+  private makeAnswerActionMessage(message: {text?: string, from: string, previousText: string}): string {
+    console.log(message)
+    if(!message.text) {
+      return `${message.from} acabou de te responder sem utilizar o formato de texto.`
+    }
+
+    return `${message.from} te respondeu em formato de texto. \
+A resposta foi: "${message.text}". Sua mensagem original foi: "${message.previousText}"`
+  }
+
+  async generateAnswer(message: {text?: string, from: string, previousText: string}): Promise<string> {
+    try {
+      const {data} = await this.openAiApi.createChatCompletion({
+        model: 'gpt-3.5-turbo',
+        temperature: 1.2,
+        messages: [
+          {role: 'system', content: this.answerSetupMessage },
+          {role: 'user', content: this.makeAnswerActionMessage(message) }
+        ],
+        max_tokens: 100,
       })
       
       const [firstChoice] = data.choices

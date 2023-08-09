@@ -1,15 +1,14 @@
+import { TelegramBotMessageDispatchAdapter } from './adapters/TelegramBotMessageDispatcherAdapter';
 import createBot from './bot';
 import { connect } from './database';
-import { ARTHUR_FALLBACK_MESSAGE, BOT_TOKEN, LUAN_FALLBACK_MESSAGE, OPEN_AI_API_KEY } from './env';
-import setupEventListeners from './useCases/botEvents';
-import { PersonModel } from './database/Entities/Person/Person';
-import { TelegramBotMessageDispatchAdapter } from './adapters/TelegramBotMessageDispatcherAdapter';
-import bot from './bot';
 import { CelebrationCalculatorFactory } from './entities/CelebrationCalculatorFactory';
+import { BOT_TOKEN, OPEN_AI_API_KEY } from './env';
 import { MessageGeneratorOpenAi } from './infra/MessageGenerator/MessageGeneratorOpenAi';
+import setupEventListeners from './useCases/botEvents';
+import { AnswerReply } from './useCases/botEvents/AnswerReply';
 import { IncrementArthurFowards } from './useCases/botEvents/incrementArthurFowards';
-import IncrementLuanAmouranth from './useCases/botEvents/incrementLuanAmouranth';
 import IncrementIrineuCounter from './useCases/botEvents/incrementIrineuCounter';
+import IncrementLuanAmouranth from './useCases/botEvents/incrementLuanAmouranth';
 
 try {
   main();
@@ -34,8 +33,15 @@ async function main() {
   const incrementArthurFowards = new IncrementArthurFowards(messageDispatcher, celebrationCalculator, generator)
   const incrementLuanAmourant = new IncrementLuanAmouranth(messageDispatcher, generator)
   const incrementIrineuCounter = new IncrementIrineuCounter(messageDispatcher, generator)
+  const answerReply = new AnswerReply(messageDispatcher, generator)
   connect();
-  setupEventListeners(bot, incrementArthurFowards, incrementLuanAmourant, incrementIrineuCounter);
+  setupEventListeners(
+    bot,
+    incrementArthurFowards,
+    incrementLuanAmourant,
+    incrementIrineuCounter,
+    answerReply
+  );
 }
 
 

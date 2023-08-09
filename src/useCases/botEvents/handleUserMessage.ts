@@ -2,10 +2,12 @@ import TelegramBot from "node-telegram-bot-api";
 import { IncrementArthurFowards } from "./incrementArthurFowards";
 import IncrementLuanAmouranth from "./incrementLuanAmouranth";
 import IncrementIrineuCounter from "./incrementIrineuCounter";
+import { AnswerReply } from "./AnswerReply";
 
 const ARTHUR_USERNAME = 'Arthur_HOS';
 const IRINEU_USERNAME = 'irimeu'
 const LUAN_FIRST_NAME = 'Luamboru'
+const BOT_USERNAME = 'nyuniversalis_bot'
 
 let lastMessageDate: number | undefined;
 
@@ -13,7 +15,8 @@ export const handleUserMessage = async (
   message: TelegramBot.Message, 
   incrementArthurFowards: IncrementArthurFowards,
   incrementLuanAmourant: IncrementLuanAmouranth,
-  incrementIrineuCounter: IncrementIrineuCounter
+  incrementIrineuCounter: IncrementIrineuCounter,
+  answerReply: AnswerReply
 ) => {
   if (!message.from) {
     return
@@ -24,6 +27,14 @@ export const handleUserMessage = async (
   lastMessageDate = message.date
   // log message info
   console.log(message);
+
+  if(message.reply_to_message?.from?.username === BOT_USERNAME){
+    answerReply.execute(message.chat.id, {
+      from: message.from.first_name, 
+      text: message.text, 
+      previousText: message.reply_to_message.text!
+    })
+  }
 
   if(message.from.username === IRINEU_USERNAME && message.sticker && message.sticker.set_name ===  'AcervoPicaPau') {
     return incrementIrineuCounter.execute(message.chat.id)
