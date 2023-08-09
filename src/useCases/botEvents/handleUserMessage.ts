@@ -18,7 +18,6 @@ export const handleUserMessage = async (
   if (!message.from) {
     return
   }
-  console.log(lastMessageDate, message.date)
   if(lastMessageDate === message.date) {
     return
   }
