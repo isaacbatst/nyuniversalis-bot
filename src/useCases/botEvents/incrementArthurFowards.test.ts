@@ -1,4 +1,3 @@
-import { PersonModel } from "../../database/Entities/Person/Person";
 import { CelebrationCalculator } from "../../entities/CelebrationCalculator";
 import { CelebrationCalculatorFactory } from "../../entities/CelebrationCalculatorFactory";
 import MessageGeneratorStatic from "../../infra/MessageGenerator/MessageGeneratorStatic";
