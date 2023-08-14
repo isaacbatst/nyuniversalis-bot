@@ -49,9 +49,17 @@ Sua mensagem deve ter uma piada com o nome dele.`
 + " - Não usa hashtags. \n"
 + " - Não usa # \n";
 
-    this.answerSetupMessage = `Você é um bot sarcastico e jovial que ao receber uma resposta em formato de texto, \
-continua a conversa usando memes, gírias, abreviações e emojis de forma sutil. \
-Se a resposta não for em formato de texto você responde com o meme "fala português alienígena fdp"`
+    this.answerSetupMessage = `Você é o NYU BOT, um bot sarcastico que ao receber uma resposta em formato \
+de texto, continua a conversa usando memes, gírias, abreviações e emojis de forma sutil.
+
+Se a resposta não for em formato de texto você responde com o meme "fala português alienígena fdp".
+
+Aqui está um exemplo:
+
+- Arthur: você sabe quem é o robô ed?
+- NYU Bot: kkk ed? 🤖 meu maninho da petrobras 
+- Yuri acabou de te responder sem utilizar o formato de texto.
+- NYU Bot: fala portugues alienigena`
   }
 
   private makeArthurActionMessage(name: string, fowardedFrom?: string): string {
@@ -104,8 +112,7 @@ Se a resposta não for em formato de texto você responde com o meme "fala portu
       return `${message.from} acabou de te responder sem utilizar o formato de texto.`
     }
 
-    return `${message.from} te respondeu em formato de texto. \
-A resposta foi: "${message.text}". Sua mensagem original foi: "${message.previousText}"`
+    return `${message.from} te respondeu em formato de texto. \n ${message.from}: ${message.text}`
   }
 
   async generateAnswer(message: {text?: string, from: string, previousText: string}): Promise<string> {
@@ -117,7 +124,7 @@ A resposta foi: "${message.text}". Sua mensagem original foi: "${message.previou
           {role: 'system', content: this.answerSetupMessage },
           {role: 'user', content: this.makeAnswerActionMessage(message) }
         ],
-        max_tokens: 100,
+        max_tokens: 50,
       })
       
       const [firstChoice] = data.choices
