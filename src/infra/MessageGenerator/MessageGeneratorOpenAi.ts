@@ -137,7 +137,14 @@ Aqui está um exemplo:
         return firstChoice.message.content.split('"')[1]
       }
   
-      return firstChoice.message.content.toLowerCase()
+      const firstChoiceFullMessage = firstChoice.message.content.toLowerCase()
+      const splittedMessage = firstChoiceFullMessage.split('NYU Bot: ')
+
+      if(splittedMessage.length === 1) {
+        return firstChoiceFullMessage
+      }
+
+      return splittedMessage[1]
     } catch (err) {
       return this.fallbackGenerator.generateIrineuMessage()
     }
