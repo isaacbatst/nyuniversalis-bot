@@ -138,7 +138,7 @@ Aqui está um exemplo:
       }
   
       const firstChoiceFullMessage = firstChoice.message.content.toLowerCase()
-      const splittedMessage = firstChoiceFullMessage.split('NYU Bot: ')
+      const splittedMessage = firstChoiceFullMessage.split('nyu bot: ')
 
       if(splittedMessage.length === 1) {
         return firstChoiceFullMessage
