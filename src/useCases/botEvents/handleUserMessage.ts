@@ -58,7 +58,7 @@ export const handleUserMessage = async (
   if (
     message.from.username === IRINEU_USERNAME &&
     message.sticker &&
-    message.sticker.set_name === "AcervoPicaPau"
+    (message.sticker.set_name === "AcervoPicaPau" || message.sticker.set_name === "picapaupic")
   ) {
     return incrementIrineuCounter.execute(message.chat.id);
   }
