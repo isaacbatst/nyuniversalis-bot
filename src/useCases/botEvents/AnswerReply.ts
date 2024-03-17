@@ -7,8 +7,12 @@ export class AnswerReply {
     private messageGenerator: MessageGenerator
   ) {}
 
-  async execute(chatId: string | number, message: {text?: string, from: string, previousText: string}) {
-    const answer = await this.messageGenerator.generateAnswer(message)
+  async execute(chatId: string | number, message: {text?: string, from: string, previousText: string}, previousMessages: {
+    from: string;
+    text: string;
+  }[]) {
+    const answer = await this.messageGenerator.generateAnswer(message, previousMessages)
     this.messageDispatcher.sendMessage(chatId, answer)
+    return answer
   }
 }

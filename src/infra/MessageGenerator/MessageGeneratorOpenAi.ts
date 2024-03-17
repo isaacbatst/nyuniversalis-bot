@@ -1,4 +1,4 @@
-import { Configuration, OpenAIApi } from "openai";
+import { ChatCompletionRequestMessageRoleEnum, Configuration, OpenAIApi } from "openai";
 import { MessageGenerator } from "../../interfaces/MessageGenerator";
 import MessageGeneratorStatic from "./MessageGeneratorStatic";
 
@@ -6,6 +6,8 @@ import MessageGeneratorStatic from "./MessageGeneratorStatic";
 type MessageGeneratorOpenAiParams = {
   apiKey: string
 }
+
+const BOT_USERNAME = process.env.BOT_USERNAME ?? "nyuniversalis_bot";
 
 export class MessageGeneratorOpenAi implements MessageGenerator {
   openAiApi: OpenAIApi
@@ -42,24 +44,21 @@ Sua mensagem deve ter uma piada com o nome dele.`
     this.irineuSetupMessage = 'Você que informa quantas vezes alguém enviou um sticker do pica pau.'
 +'Suas mensagens reagem a quando um amigo envia um skicker do pica pau, informando quantas vezes ele já compartilhou esse sticker com uma piadinha e emojis. '
 + "Suas mensagens tem TODAS características a seguir:" 
-+ " - No máximo 15 palavras. \n"
 + " - Tem todas as letras minúsculas. \n"
 + " - Usa emojis e palavras abreviadas, como os jovens conversam em redes sociais. \n"
-+ " - Usa gírias como: 'fmz', 'slc', 'top', 'nice'. \n"
++ " - Usa gírias como: 'fmz', 'slc', 'top', 'nice', 'based', 'baseado', 'cringe'\n"
 + " - Não usa hashtags. \n"
-+ " - Não usa # \n";
+
 
     this.answerSetupMessage = `Você é o NYU BOT, um bot sarcastico que ao receber uma resposta em formato \
-de texto, continua a conversa usando memes, gírias, abreviações e emojis de forma sutil.
-
-Se a resposta não for em formato de texto você responde com o meme "fala português alienígena fdp".
+de texto, continua a conversa usando memes, gírias, abreviações e emojis.
 
 Aqui está um exemplo:
 
 - Arthur: você sabe quem é o robô ed?
 - NYU Bot: kkk ed? 🤖 meu maninho da petrobras 
 - Yuri acabou de te responder sem utilizar o formato de texto.
-- NYU Bot: fala portugues alienigena`
+- NYU Bot: fala portugues alienigena `
   }
 
   private makeArthurActionMessage(name: string, fowardedFrom?: string): string {
@@ -107,7 +106,6 @@ Aqui está um exemplo:
   }
 
   private makeAnswerActionMessage(message: {text?: string, from: string, previousText: string}): string {
-    console.log(message)
     if(!message.text) {
       return `${message.from} acabou de te responder sem utilizar o formato de texto.`
     }
@@ -115,13 +113,26 @@ Aqui está um exemplo:
     return `${message.from} te respondeu em formato de texto. \n ${message.from}: ${message.text}`
   }
 
-  async generateAnswer(message: {text?: string, from: string, previousText: string}): Promise<string> {
+  async generateAnswer(message: {text?: string, from: string, previousText: string}, previousMessages: {
+    from: string;
+    text: string;
+  }[]): Promise<string> {
     try {
+      const messagesWithSetups = previousMessages.map(this.mapToCompletionWithSetup)
+      const messages: {role: ChatCompletionRequestMessageRoleEnum, content: string}[] = []
+
+      for(const message of messagesWithSetups) {
+        messages.push(...message)
+      }
+
+      console.log(messages)
+
       const {data} = await this.openAiApi.createChatCompletion({
         model: 'gpt-3.5-turbo',
         temperature: 1.2,
         messages: [
           {role: 'system', content: this.answerSetupMessage },
+          ...messages,
           {role: 'user', content: this.makeAnswerActionMessage(message) }
         ],
         max_tokens: 50,
@@ -148,6 +159,14 @@ Aqui está um exemplo:
     } catch (err) {
       return this.fallbackGenerator.generateIrineuMessage()
     }
+  }
+
+  private mapToCompletionWithSetup(message: {from: string, text: string}) {
+    const role = message.from === BOT_USERNAME ? 'assistant' : 'user'
+    return [
+      {role: 'system', content: `Mensagem enviada por ${message.from}.`},
+      {role, content: message.text }
+    ] as const
   }
 
   async generateLuanAmouranthMessage(nickname: string, channelUrl: string): Promise<string> {
